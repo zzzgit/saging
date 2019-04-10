@@ -1,0 +1,2 @@
+//	如果傳入參數本身是promise，則不用傳asyncFunc
+//  可視化
