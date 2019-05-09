@@ -1,7 +1,7 @@
-import Feeder from "./Feeder";
-import Digester from "./Digester";
-import AsyncFunc from "./type/AsyncFunc";
-import { EventEmitter } from "events";
+import Feeder from "./Feeder"
+import Digester from "./Digester"
+import AsyncFunc from "./type/AsyncFunc"
+import {EventEmitter} from "events"
 
 
 /**	// apply state machine 
@@ -12,7 +12,7 @@ class Saging {
 	private _feeder: Feeder;
 	private _runners_arr: Digester[] = []
 	private _isShutdown: boolean = false
-	public get threads() {
+	public get threads() :number {
 		return this._runners_arr.length
 	}
 	public set threads(number: number) {
@@ -31,35 +31,36 @@ class Saging {
 	}
 	constructor(n?: number) {
 		this._bus = new EventEmitter()
-		this._bus.on("done", runner => {
+		this._bus.on("done", () => {
 		})
 		this._bus.on("readyToRemove", runner => {
 			this._remove(runner)
 		})
-		this._bus.on("starved", runner => {
+		this._bus.on("starved", () => {
 			// this._remove(runner)
 		})
+		n = n || 1
 		this._init(n)
 	}
-	push(tasks: AsyncFunc | AsyncFunc[]) {
+	push(tasks: AsyncFunc | AsyncFunc[]):void {
 		if (this._isShutdown) {
 			throw new Error("already shutdown")
 		}
 		if (!tasks) {
-			return null
+			return undefined
 		}
 		this._feeder.push(tasks)
 	}
-	_deprecate(n: number) {
-		let border = this.threads - n
+	_deprecate(n: number) :void{
+		const border = this.threads - n
 		for (let i = this.threads-1; i >= border; i--) {
 			this._runners_arr[i].deprecate()
 		}
 	}
-	_addRunner(n: number) {
-		let temp_arr = []
+	_addRunner(n: number):void {
+		const temp_arr: Digester[] = []
 		for (let i = 0; i < n; i++) {
-			let digester = new Digester(this, this._bus)
+			const digester = new Digester(this, this._bus)
 			temp_arr.push(digester)
 			this._runners_arr.push(digester)
 		}
@@ -69,20 +70,20 @@ class Saging {
 	}
 	feed(): Promise<AsyncFunc> {
 		if (this._isShutdown) {
-			return Promise.reject("already shut down")
+			return Promise.reject(new Error("already shut down"))
 		}
 		return this._feeder.feed()
 	}
-	_remove(runner: Digester) {
-		let index_n = this._runners_arr.indexOf(runner)
+	_remove(runner: Digester):void {
+		const index_n = this._runners_arr.indexOf(runner)
 		this._runners_arr.splice(index_n, 1)
 		runner.shutdown()
 	}
-	_init(n: number) {
+	_init(n: number): void{
 		this._feeder = new Feeder(this._bus)
 		this._addRunner(n)
 	}
-	shutdown() {
+	shutdown(): void {
 		this._isShutdown = true
 		this._feeder.shutdown()
 		this._runners_arr.forEach(runner => {

@@ -11,5 +11,6 @@ selenium-debug.log
 .rpt2_cache/
 *.map
 **/*.js
+!jest.config.js
 !rollup.config.js
 !index.js
