@@ -11,7 +11,7 @@ import Reject from "./type/Reject"
  * machine
  */
 class Feeder {
-	private _isShutdown: boolean = false
+	// private _isShutdown: boolean = false
 	private _tasks_arr: AsyncFunc[] = []
 	private _resolves_arr: Resolve[] = []
 	private _rejects_arr: Reject[] = []
@@ -26,7 +26,7 @@ class Feeder {
 		if (this._tasks_arr.length) {
 			const item = this._tasks_arr.shift()
 			if (item) {
-				return Promise.resolve(item) 
+				return Promise.resolve(item)
 			}
 		}
 		return new Promise((resolve: Resolve, reject: Reject) => {
@@ -38,7 +38,7 @@ class Feeder {
 		if (!Array.isArray(tasks)) {
 			tasks = [tasks]
 		}
-		tasks.forEach(item => {
+		tasks.forEach((item) => {
 			this._push1(item)
 		})
 	}
@@ -50,7 +50,7 @@ class Feeder {
 		this._tasks_arr.push(task)
 	}
 	shutdown(): void {
-		this._isShutdown = true
+		// this._isShutdown = true
 		// this._bus = undefined
 		this._tasks_arr = []
 		this._resolves_arr = []

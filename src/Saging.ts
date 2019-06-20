@@ -9,7 +9,7 @@ import {EventEmitter} from "events"
  */
 class Saging {
 	private _bus: EventEmitter;
-	private _feeder: Feeder;
+	private _feeder!: Feeder;
 	private _runners_arr: Digester[] = []
 	private _isShutdown: boolean = false
 	public get threads() :number {
@@ -33,7 +33,7 @@ class Saging {
 		this._bus = new EventEmitter()
 		this._bus.on("done", () => {
 		})
-		this._bus.on("readyToRemove", runner => {
+		this._bus.on("readyToRemove", (runner) => {
 			this._remove(runner)
 		})
 		this._bus.on("starved", () => {
@@ -64,7 +64,7 @@ class Saging {
 			temp_arr.push(digester)
 			this._runners_arr.push(digester)
 		}
-		temp_arr.forEach(runner => {
+		temp_arr.forEach((runner) => {
 			runner.run()
 		})
 	}
@@ -86,7 +86,7 @@ class Saging {
 	shutdown(): void {
 		this._isShutdown = true
 		this._feeder.shutdown()
-		this._runners_arr.forEach(runner => {
+		this._runners_arr.forEach((runner) => {
 			runner.shutdown()
 		})
 	}

@@ -1,5 +1,4 @@
-import {repeat, compose} from "kaze"
-import AsyncFunc from "kaze/built/t/type/AsyncFunc"
+import Saging from "../../src/Saging"
 
 
 // const constants = {
@@ -11,37 +10,31 @@ import AsyncFunc from "kaze/built/t/type/AsyncFunc"
 // 		setTimeout(() => resolve(value), period_n)
 // 	})
 // }
-
-const addone_task: AsyncFunc = (i: any): Promise<any> => {
-	return Promise.resolve(i + 1)
-}
 // const throw_task: AsyncFunc = (): Promise<any> => {
 // 	throw new Error(constants.ERR_THROWN_IN_THROW_TASK)
 // }
-// const invalidAyncFunc = (): number => 3333
 
+// const addone_task: AsyncFunc = (i: any): Promise<any> => {
+// 	return Promise.resolve(i + 1)
+// }
 
 describe('compose', () => {
 	test('normal use', () => {
-		return expect(compose([addone_task, addone_task])(1)).resolves.toBe(3)
-	})
-	test('with empty task array', () => {
-		return expect(compose([])(3)).resolves.toBe(3)
-	})
-})
-describe('repeat', () => {
-	test('normal use', () => {
 		let i = 0
-		const add = (): Promise<number> => {
-			return Promise.resolve(i++)
+		const task = (): Promise<any> => {
+			return new Promise(resolve => {
+				setTimeout(() => {
+					i++
+					console.log(i)
+					resolve(222)
+				}, .4 * 1000)
+			})
 		}
-		return expect(repeat(add, 3).then(() => (i == 3))).resolves.toBe(true)
-	})
-	test('normal use, noop', () => {
-		let i = 0
-		const add = (): Promise<number> => {
-			return Promise.resolve(i++)
+		const sag: Saging = new Saging(2)
+		for (let i = 0; i < 300; i++) {
+			sag.push(task)
 		}
-		return expect(repeat(add, -1).then(() => (i == 0))).resolves.toBe(true)
+		sag.threads = 2
+		return expect(Promise.resolve(2)).resolves.toBe(2)
 	})
 })
